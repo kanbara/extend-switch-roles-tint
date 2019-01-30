@@ -1,0 +1,33 @@
+[account.dev]
+role_arn = someArn::test::blah
+color = ffabcd
+
+[account.int]
+role_name = role
+aws_account_id = 1234567891234
+
+[account2.dev]
+role_arn = someArn::test::blah
+color = ccff00
+
+[account3]
+role_arn = someArn::test::blah
+stuff, who cares
+color = 773324
+
+[account4.dev]
+color = ffabcd
+role_arn = someArn::test::blah
+
+[account4.int]
+role_name = role
+aws_account_id = 1234567891234
+
+[account.prd]
+role_name = role
+aws_account_id = 1234567891234
+
+[account.rand]
+role_name = role
+aws_account_id = 1234567891234
+

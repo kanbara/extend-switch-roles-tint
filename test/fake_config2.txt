@@ -1,0 +1,32 @@
+[Banana-account]
+role_arn = someArn::test::blah
+color = ffabcd
+
+[Int-account]
+role_name = role
+aws_account_id = 1234567891234
+
+[Dev-account2]
+role_arn = someArn::test::blah
+color = ffabcd
+
+[account3]
+role_arn = someArn::test::blah
+color = ffabcd
+
+[Dev-account]
+role_arn = someArn::test::blah
+color = ffabcd
+
+[Banana-account4]
+role_name = role
+aws_account_id = 1234567891234
+
+[Prd-account]
+role_name = role
+aws_account_id = 1234567891234
+
+[Rand-account]
+role_name = role
+aws_account_id = 1234567891234
+
