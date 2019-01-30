@@ -49,7 +49,7 @@ func (s *SplitStrategy) GetBins(conf config.Config, globs []string, debug bool) 
 	return bins, numBins
 }
 
-func (s *SplitStrategy) Replace(conf config.Config, globs []string, debug bool) ([]color.Color, config.Config, error) {
+func (s *SplitStrategy) Replace(conf config.Config, globs []string,generator gamut.ColorGenerator, debug bool) ([]color.Color, config.Config, error) {
 
 	bins, numBins := s.GetBins(conf, globs, debug)
 
@@ -67,7 +67,7 @@ func (s *SplitStrategy) Replace(conf config.Config, globs []string, debug bool) 
 		fmt.Printf("Num bins: %v\n", numBins)
 	}
 
-	colours, err := gamut.Generate(numBins, gamut.PastelGenerator{})
+	colours, err := gamut.Generate(numBins, generator)
 	if err != nil {
 		return nil, config.Config{}, err
 	}
@@ -85,6 +85,6 @@ func (s *SplitStrategy) Replace(conf config.Config, globs []string, debug bool) 
 		}
 		curColor += 1
 	}
-	
+
 	return colours, conf, nil
 }

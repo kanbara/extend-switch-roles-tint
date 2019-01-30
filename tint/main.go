@@ -10,17 +10,29 @@ import (
 	"gopkg.in/alecthomas/kingpin.v2"
 	"image/color"
 	"os"
+	"reflect"
+	"strings"
 )
 
+var generators = []gamut.ColorGenerator{
+	gamut.PastelGenerator{},
+	//gamut.SimilarHueGenerator{},
+	gamut.WarmGenerator{},
+	gamut.HappyGenerator{},
+}
+
+var generatorMap = makeGeneratorMap(generators)
+var generatorNames = getGeneratorNames(generatorMap)
 
 var (
 	app = kingpin.New("extend-switch-roles-tint", "Generate colours for your AWS Extend Switch Roles plugin")
 	debug = kingpin.Flag("debug", "debug mode").Hidden().Default("false").Bool()
 	show = app.Flag("show", "Show the colours (requires a true colour capable term like iTerm2, konsole, PuTTY").
 		Default("false").Bool()
-	generator = app.Flag("generator", "The type of palette to use").
-		HintOptions("Pastel").
-		HintOptions("Warm").String()
+	generator = app.Flag("generator",
+		fmt.Sprintf("The type of generator to use,can be: %v", generatorMap)).Default(generatorNames[0]).
+		Enum(generatorNames...)
+
 	outfile = app.Flag("outfile", "Output file").Short('o').Default("extend-roles.conf").String()
 
 	fromfile = app.Command("from-file", "Generate colours and edit a config automatically")
@@ -32,6 +44,27 @@ var (
 	numcolours = fromnum.Arg("number", "Number of colours to generate").Required().Int()
 )
 
+func makeGeneratorMap(gens []gamut.ColorGenerator) map[string]gamut.ColorGenerator {
+	genMap := make(map[string]gamut.ColorGenerator, len(gens))
+
+	for _, g := range gens {
+		name := reflect.TypeOf(g).String()
+		name = strings.TrimPrefix(name, "gamut.")
+		name = strings.TrimSuffix(name, "Generator")
+		genMap[strings.ToLower(name)] = g
+	}
+
+	return genMap
+}
+
+func getGeneratorNames(genMap map[string]gamut.ColorGenerator) []string {
+	var names []string
+	for k := range genMap {
+		names = append(names, k)
+	}
+
+	return names
+}
 func showColours (colours []color.Color) {
 	for _, colour := range colours {
 		foreR, foreG, foreB, _ := gamut.Contrast(colour).RGBA()
@@ -67,7 +100,7 @@ func main() {
 		}
 
 		strat := strategy.SplitStrategy{}
-		newColours, newConf, err := strat.Replace(conf, *globs, *debug)
+		newColours, newConf, err := strat.Replace(conf, *globs, generatorMap[*generator], *debug)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
